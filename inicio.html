@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao Gerador de Currículo IA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #121828; --surface-color: #1E293B; --primary-color: #3B82F6; --primary-hover: #2563EB; --text-color: #E2E8F0; --text-secondary: #94A3B8; --border-color: #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; display: flex; justify-content: center; align-items: center; flex-direction: column; min-height: 100vh; background: var(--bg-color); color: var(--text-color); }
+        .main-nav { position: absolute; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { color: #fff; text-decoration: none; font-weight: 600; }
+        .container { background-color: var(--surface-color); border-radius: 10px; box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22); position: relative; overflow: hidden; width: 768px; max-width: 95%; min-height: 520px; }
+        .form-container { position: absolute; top: 0; height: 100%; transition: all 0.6s ease-in-out; }
+        form { background-color: var(--surface-color); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 50px; text-align: center; }
+        h1 { font-weight: bold; margin-bottom: 15px; font-size: 2em; color: #fff; }
+        p { font-size: 14px; margin: 20px 0 30px; }
+        span { font-size: 12px; margin: 20px 0; color: var(--text-secondary); }
+        a { color: var(--text-secondary); font-size: 14px; text-decoration: none; margin: 15px 0; }
+        input { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 5px; padding: 12px 15px; margin: 8px 0; width: 100%; color: var(--text-color); font-family: 'Poppins', sans-serif; }
+        input:focus { outline: none; border-color: var(--primary-color); }
+        button { border-radius: 20px; border: 1px solid var(--primary-color); background-color: var(--primary-color); color: #FFFFFF; font-size: 12px; font-weight: bold; padding: 12px 45px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; margin-top: 10px; transition: all 0.3s; }
+        button:hover:not(:disabled) { background-color: var(--primary-hover); }
+        button:disabled { cursor: not-allowed; opacity: 0.7; }
+        button.ghost { background-color: transparent; border-color: #FFFFFF; }
+        .social-container { margin: 20px 0; }
+        .social { border: 1px solid var(--border-color); border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; margin: 0 5px; height: 40px; width: 40px; color: var(--text-secondary); text-decoration: none; transition: all 0.3s; }
+        .social:hover { color: #fff; border-color: #fff; }
+        .sign-in-container { left: 0; width: 50%; z-index: 2; }
+        .sign-up-container { left: 0; width: 50%; opacity: 0; z-index: 1; }
+        .overlay-container { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; overflow: hidden; z-index: 100; transition: transform 0.6s ease-in-out; }
+        .overlay { background: linear-gradient(to right, var(--primary-color), #8B5CF6); position: relative; left: -100%; height: 100%; width: 200%; transform: translateX(0); transition: transform 0.6s ease-in-out; }
+        .overlay-panel { position: absolute; top: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 0 40px; text-align: center; height: 100%; width: 50%; transform: translateX(0); transition: transform 0.6s ease-in-out; }
+        .overlay-left { transform: translateX(-20%); }
+        .overlay-right { right: 0; transform: translateX(0); }
+        .container.right-panel-active .sign-in-container { transform: translateX(100%); }
+        .container.right-panel-active .sign-up-container { transform: translateX(100%); opacity: 1; z-index: 5; animation: show 0.6s; }
+        @keyframes show { 0%, 49.99% { opacity: 0; z-index: 1; } 50%, 100% { opacity: 1; z-index: 5; } }
+        .container.right-panel-active .overlay-container { transform: translateX(-100%); }
+        .container.right-panel-active .overlay { transform: translateX(50%); }
+        .container.right-panel-active .overlay-left { transform: translateX(0); }
+        .container.right-panel-active .overlay-right { transform: translateX(20%); }
+        @media (max-width: 768px) { .nav-links { display: none; } .main-nav { justify-content: center; padding: 20px 15px; } .container { width: 95%; max-width: 400px; min-height: 600px; } }
+    </style>
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="logo">Currículo.IA</div>
+        <ul class="nav-links">
+            <li><a href="#">Recursos</a></li>
+            <li><a href="#">Sobre</a></li>
+            <li><a href="#">Contato</a></li>
+        </ul>
+    </nav>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form>
+                <h1>Criar Conta</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fas fa-mobile-alt"></i></a>
+                </div>
+                <span>ou use seu email para registrar</span>
+                <input type="text" placeholder="Nome" />
+                <input type="email" placeholder="Email" required/>
+                <input type="password" placeholder="Senha" required/>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form>
+                <h1>Entrar</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fas fa-mobile-alt"></i></a>
+                </div>
+                <span>ou use sua conta</span>
+                <input type="email" placeholder="Email" required/>
+                <input type="password" placeholder="Senha" required/>
+                <a href="#">Esqueceu a senha?</a>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Já tem uma conta?</h1>
+                    <p>Faça login para acessar seus currículos.</p>
+                    <button class="ghost" id="signIn">Entrar</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Olá, Amigo!</h1>
+                    <p>Comece sua jornada conosco.</p>
+                    <button class="ghost" id="signUp">Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="inicio.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Currículo com IA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #121828;
+            --surface-color: #1E293B;
+            --primary-color: #3B82F6;
+            --primary-hover: #2563EB;
+            --success-color: #10B981;
+            --error-color: #EF4444;
+            --text-color: #E2E8F0;
+            --text-secondary: #94A3B8;
+            --border-color: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; color: #FFFFFF; background: -webkit-linear-gradient(45deg, var(--primary-color), #a259ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header p { font-size: 1.1rem; color: var(--text-secondary); }
+        #cv-form { position: relative; }
+        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(30, 41, 59, 0.7); z-index: 10; display: flex; justify-content: center; align-items: center; border-radius: 8px; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+        .loading-overlay.visible { opacity: 1; visibility: visible; }
+        .spinner { width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .form-section { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: box-shadow 0.3s; }
+        .form-section:focus-within { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+        .form-section h2 { font-size: 1.5rem; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); color: #FFFFFF; display: flex; align-items: center; }
+        .form-section h2 i { margin-right: 15px; color: var(--primary-color); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+        input, textarea { width: 100%; padding: 12px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-color); font-size: 1rem; font-family: 'Poppins', sans-serif; transition: border-color 0.3s, box-shadow 0.3s; }
+        input:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        textarea { resize: vertical; min-height: 100px; }
+        .cta-button { background-color: var(--primary-color); color: #FFFFFF; font-size: 1.2rem; font-weight: 700; border: none; border-radius: 8px; padding: 15px; width: 100%; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; }
+        .cta-button:hover:not(:disabled) { background-color: var(--primary-hover); transform: translateY(-3px); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .cta-button:disabled { cursor: not-allowed; background-color: var(--border-color); }
+        .cta-button.success { background-color: var(--success-color); }
+        .cta-button.error { background-color: var(--error-color); }
+        #idade::-webkit-outer-spin-button, #idade::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        #idade[type=number] { -moz-appearance: textfield; }
+        .color-palette-selector { display: flex; gap: 15px; justify-content: center; align-items: center; }
+        .color-swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.2s, border-color 0.2s; }
+        .color-swatch:hover { transform: scale(1.1); }
+        .color-swatch.selected { border-color: #FFFFFF; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        .photo-uploader { display: flex; align-items: center; gap: 30px; }
+        .photo-preview-container { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        #photo-preview { width: 100%; height: 100%; object-fit: cover; }
+        .photo-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .photo-button { background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; }
+        .photo-button:hover { background-color: var(--border-color); border-color: var(--primary-color); }
+        .photo-button i { margin-right: 10px; }
+        .photo-button.remove { background-color: var(--error-color); border-color: var(--error-color); }
+        .photo-button.remove:hover { background-color: #d32f2f; border-color: #d32f2f; }
+        #photo-upload { display: none; }
+        .camera-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+        .camera-modal.visible { opacity: 1; visibility: visible; }
+        .modal-content { background-color: var(--surface-color); padding: 20px; border-radius: 8px; text-align: center; }
+        #camera-video { width: 100%; max-width: 500px; border-radius: 8px; margin-bottom: 20px; }
+        .modal-controls { display: flex; gap: 20px; justify-content: center; }
+        .user-header { text-align: right; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-secondary); }
+        #user-email { font-weight: 600; color: var(--text-color); }
+        #logout-button { background: none; border: none; color: var(--primary-color); cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-left: 10px; text-decoration: underline; }
+        #logout-button:hover { color: var(--primary-hover); }
+
+        /* ✅✅✅ CÓDIGO RESPONSIVO PARA CELULAR ESTÁ AQUI ✅✅✅ */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            .photo-uploader {
+                flex-direction: column; /* Coloca a foto em cima dos botões */
+                text-align: center;
+            }
+            .form-section {
+                padding: 20px;
+            }
+            .user-header {
+                text-align: center;
+                padding: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-header">
+            Bem-vindo, <span id="user-email">...</span> | <button id="logout-button">Sair</button>
+        </div>
+
+        <header>
+            <h1>Crie seu Currículo com Inteligência Artificial</h1>
+            <p>Preencha os campos abaixo e deixe nossa IA transformar suas informações em um currículo profissional.</p>
+        </header>
+
+        <form id="cv-form">
+            <div id="loading-overlay" class="loading-overlay"><div class="spinner"></div></div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-camera-retro"></i> Foto de Perfil (Opcional)</h2>
+                <div class="photo-uploader">
+                    <div class="photo-preview-container"><img id="photo-preview" src="https://via.placeholder.com/150" alt="Pré-visualização da foto"></div>
+                    <div class="photo-buttons">
+                        <label for="photo-upload" class="photo-button"><i class="fas fa-upload"></i> Enviar Arquivo</label>
+                        <input type="file" id="photo-upload" accept="image/png, image/jpeg">
+                        <button type="button" id="take-photo-button" class="photo-button"><i class="fas fa-camera"></i> Usar Câmera</button>
+                        <button type="button" id="remove-photo-button" class="photo-button remove" style="display: none;"><i class="fas fa-trash"></i> Remover Foto</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-user-circle"></i> Dados Pessoais</h2>
+                <div class="input-group"><label for="nome">Nome Completo</label><input type="text" id="nome" name="nome" placeholder="Ex: Maria da Silva" required></div>
+                <div class="input-group"><label for="cargoDesejado">Cargo Desejado ou Objetivo Profissional</label><input type="text" id="cargoDesejado" name="cargoDesejado" placeholder="Ex: Desenvolvedor Front-end Pleno" required></div>
+                <div class="input-group"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="Ex: maria.silva@email.com"></div>
+                <div class="input-group"><label for="telefone">Telefone</label><input type="tel" id="telefone" name="telefone" placeholder="Ex: (98) 98765-4321"></div>
+                <div class="input-group"><label for="linkedin">Perfil do LinkedIn (Opcional)</label><input type="url" id="linkedin" name="linkedin" placeholder="Ex: https://linkedin.com/in/mariadasilva"></div>
+                <div class="input-group"><label for="idade">Idade (Opcional)</label><input type="number" id="idade" name="idade" placeholder="Ex: 28" min="0"></div>
+                <div class="input-group"><label for="endereco">Endereço (Opcional)</label><input type="text" id="endereco" name="endereco" placeholder="Ex: Rua das Flores, 123 - São Luís, MA"></div>
+                <div class="input-group"><label for="estadoCivil">Estado Civil (Opcional)</label><input type="text" id="estadoCivil" name="estadoCivil" placeholder="Ex: Solteiro(a), Casado(a)"></div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-briefcase"></i> Experiência Profissional</h2>
+                <textarea id="experiencia" name="experiencia" rows="6" placeholder="Ex: Empresa Acme (2020 - 2024), Cargo: Vendedor..."></textarea>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-graduation-cap"></i> Formação Acadêmica</h2>
+                <textarea id="formacao" name="formacao" rows="4" placeholder="Ex: Universidade Federal do Maranhão (2015 - 2019)..."></textarea>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-cogs"></i> Habilidades</h2>
+                <textarea id="habilidades" name="habilidades" rows="4" placeholder="Ex: JavaScript, React, Comunicação Proativa..."></textarea>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-palette"></i> Escolha a Cor do Tema</h2>
+                <div class="color-palette-selector">
+                    <div class="color-swatch selected" data-theme="blue" style="background-color: #3B82F6;"></div>
+                    <div class="color-swatch" data-theme="green" style="background-color: #10B981;"></div>
+                    <div class="color-swatch" data-theme="purple" style="background-color: #8B5CF6;"></div>
+                    <div class="color-swatch" data-theme="orange" style="background-color: #F97316;"></div>
+                    <div class="color-swatch" data-theme="gray" style="background-color: #6B7280;"></div>
+                </div>
+                <input type="hidden" id="theme" name="theme" value="blue">
+            </div>
+
+            <button type="submit" class="cta-button"><span class="button-text">✨ Gerar Meu Currículo com IA</span></button>
+        </form>
+    </div>
+
+    <div id="camera-modal" class="camera-modal">
+        <div class="modal-content">
+            <video id="camera-video" autoplay playsinline></video>
+            <canvas id="camera-canvas" style="display: none;"></canvas>
+            <div class="modal-controls">
+                <button type="button" id="capture-button" class="photo-button"><i class="fas fa-camera"></i> Tirar Foto</button>
+                <button type="button" id="close-modal-button" class="photo-button remove"><i class="fas fa-times"></i> Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
