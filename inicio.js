@@ -1,11 +1,12 @@
 // inicio.js
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// ✅ COLOQUE SUAS CREDENCIAIS DO SUPABASE AQUI ✅
+// ✅ COLOQUE SUAS CREDENCIAIS CORRETAS AQUI ✅
 const supabaseUrl = 'https://fvilrlcwcizqzyhxybbq.supabase.co'; 
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2aWxybGN3Y2l6cXp5aHh5YmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3Mjk1MDcsImV4cCI6MjA3NjMwNTUwN30.8GeyoYnqXzTbzPq1t8tAilUO7pCL83lmBZ8eOHC-_ko';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
+const supabase = createClient(supabaseUrl, supabaseKey);
+// ...
 // ... (cole o resto do código do 'inicio.js' da minha resposta anterior aqui) ...
 const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
